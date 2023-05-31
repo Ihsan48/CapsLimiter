@@ -25,11 +25,13 @@ class CapsLimit extends PluginBase implements Listener{
     public $messageConfig;
     private $langs = ["tr_TR","en_US"];
     
-    private static $instance;
-    public function onLoad() {
+    private static CapsLimit|null $instance;
+
+    public function onLoad() : void {
         self::$instance = $this;
     }
-    public function onEnable(){
+
+    public function onEnable() : void {
         $this->prefix = $this->getConfig()->get("prefix");
         $this->loadConfig();
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
@@ -40,7 +42,11 @@ class CapsLimit extends PluginBase implements Listener{
         $this->messages = $this->messageConfig->getAll();
     }
 
-    public function onDisable(){
+    public static function getInstance() : CapsLimit {
+        return self::$instance;
+    }
+
+    public function onDisable() : void {
         $this->saveConfig();
     }
 
@@ -86,21 +92,21 @@ class CapsLimit extends PluginBase implements Listener{
     }
 
     public function onCommand(CommandSender $sender, Command $command, $commandAlias, array $args): bool{
-            if(!$sender->hasPermission("capslimit.set")){
+        f(!$sender->hasPermission("capslimit.set")){
             return false;
-          }
-          if(!is_array($args) or count($args) < 1){
-            $sender->sendMessage($this->prefix.self::Text("use-command"));
-            return true;
-          }
-          if (!is_array($args) or is_numeric($args[0]) > 0){
-            $this->maxcaps = $args[0];
-            $sender->sendMessage($this->prefix.self::Text("max-caps").$this->maxcaps);
-            $this->saveConfig();
-            return true;
-          }
-            $sender->sendMessage($this->prefix.self::Text("must-number"));
-            return false;
+        }
+        if(!is_array($args) or count($args) < 1){
+        $sender->sendMessage($this->prefix.self::Text("use-command"));
+        return true;
+        }
+        if (!is_array($args) or is_numeric($args[0]) > 0){
+        $this->maxcaps = $args[0];
+        $sender->sendMessage($this->prefix.self::Text("max-caps").$this->maxcaps);
+        $this->saveConfig();
+        return true;
+        }
+        $sender->sendMessage($this->prefix.self::Text("must-number"));
+        return false;
     }
     
     public function onChat(PlayerChatEvent $event){
@@ -118,7 +124,7 @@ class CapsLimit extends PluginBase implements Listener{
             }
         }
         if ($count > $this->maxcaps) {
-            $event->setCancelled(true);
+            $event->cancel();
             $player->sendMessage($this->prefix.TextFormat::RED.self::Text("chat-message"));
         }
     }
