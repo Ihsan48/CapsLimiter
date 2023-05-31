@@ -91,10 +91,16 @@ class CapsLimit extends PluginBase implements Listener{
         );
     }
 
-    public function onCommand(CommandSender $sender, Command $command, $commandAlias, array $args): bool{
-        f(!$sender->hasPermission("capslimit.set")){
-            return false;
+    public function onCommand(CommandSender $sender, Command $command, string $commandAlias, array $args) : bool {
+        if ($cmd->getName() === "capslimit") {
+            if(!$sender->hasPermission("capslimit.cmd")){
+                return false;
+            }
+            if (!isset($args[0])) {
+                // TODO: 
+            }
         }
+        return true;
         if(!is_array($args) or count($args) < 1){
         $sender->sendMessage($this->prefix.self::Text("use-command"));
         return true;
